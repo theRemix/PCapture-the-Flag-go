@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"os"
 	"sort"
@@ -42,10 +43,13 @@ func parsePacket(serverResponse map[uint32][]byte, packet gopacket.Packet) {
 
 func main() {
 
-	debug := false
-	writeFile := true
+	var outFilename string
+	inspect := flag.Bool("inspect", false, "boolean")
+	flag.StringVar(&outFilename, "o", "reconstructed-file.jpg", "filename")
 
-	fo, err := os.Create("./reconstructed-file.jpg")
+	flag.Parse()
+
+	fo, err := os.Create("./" + outFilename)
 	if err != nil {
 		panic(err)
 	}
@@ -61,14 +65,12 @@ func main() {
 
 		packetID := 0
 		for packet := range packetSource.Packets() {
-			if debug {
+			if *inspect {
 				fmt.Printf("Parsing Packet: %d\n", packetID)
 				inspectPacket(packet)
 				packetID++
 			}
-			if writeFile {
-				parsePacket(serverResponse, packet)
-			}
+			parsePacket(serverResponse, packet)
 		}
 
 		// order serverResponse Seq numbers
