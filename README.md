@@ -30,6 +30,8 @@ go run *.go -inspect
 
 ## Parsing Packet Capture File
 
+See [./main.go](./main.go)
+
 - read pcap file
 - parse each captured packet
   - parse Link Layer
